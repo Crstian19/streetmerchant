@@ -2,6 +2,7 @@ import {banner} from './banner';
 
 import {config as config_} from 'dotenv';
 import path from 'path';
+import {readFileSync} from 'fs';
 
 config_({path: path.resolve(__dirname, '../.env')});
 
@@ -179,7 +180,7 @@ const notifications = {
 	desktop: process.env.DESKTOP_NOTIFICATIONS === 'true',
 	discord: {
 		notifyGroup: envOrArray(process.env.DISCORD_NOTIFY_GROUP),
-		webHookUrl: envOrArray(process.env.DISCORD_WEB_HOOK)
+		webhooks: envOrArray(process.env.DISCORD_WEB_HOOK)
 	},
 	email: {
 		password: envOrString(process.env.EMAIL_PASSWORD),
@@ -231,7 +232,8 @@ const notifications = {
 			['tmobile', 'tmomail.net'],
 			['verizon', 'vtext.com'],
 			['virgin', 'vmobl.com'],
-			['virgin-ca', 'vmobile.ca']
+			['virgin-ca', 'vmobile.ca'],
+			['visible', 'vtext.com']
 		]),
 		carrier: envOrArray(process.env.PHONE_CARRIER),
 		number: envOrArray(process.env.PHONE_NUMBER)
@@ -291,7 +293,8 @@ const page = {
 
 const proxy = {
 	address: envOrString(process.env.PROXY_ADDRESS),
-	port: envOrNumber(process.env.PROXY_PORT, 80)
+	port: envOrNumber(process.env.PROXY_PORT, 80),
+	protocol: envOrString(process.env.PROXY_PROTOCOL, 'http')
 };
 
 // Check for deprecated configuration values
@@ -306,6 +309,7 @@ const store = {
 	country: envOrString(process.env.COUNTRY, 'usa'),
 	maxPrice: {
 		series: {
+			'3060ti': envOrNumber(process.env.MAX_PRICE_SERIES_3060TI),
 			3070: envOrNumber(process.env.MAX_PRICE_SERIES_3070),
 			3080: envOrNumber(process.env.MAX_PRICE_SERIES_3080),
 			3090: envOrNumber(process.env.MAX_PRICE_SERIES_3090),
@@ -317,9 +321,9 @@ const store = {
 			ryzen5900: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5900),
 			ryzen5950: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5950),
 			sf: envOrNumber(process.env.MAX_PRICE_SERIES_CORSAIR_SF),
-			sonyps5c: -1,
-			sonyps5de: -1,
-			'test:series': -1,
+			sonyps5c: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5C),
+			sonyps5de: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5DE),
+			'test:series': envOrNumber(process.env.MAX_PRICE_SERIES_TEST),
 			xboxss: -1,
 			xboxsx: -1
 		}
@@ -334,6 +338,7 @@ const store = {
 		};
 	}),
 	showOnlySeries: envOrArray(process.env.SHOW_ONLY_SERIES, [
+		'3060ti',
 		'3070',
 		'3080',
 		'3090',
@@ -351,6 +356,16 @@ const store = {
 	]),
 	stores: envOrArray(process.env.STORES, ['nvidia']).map((entry) => {
 		const [name, minPageSleep, maxPageSleep] = entry.match(/[^:]+/g) ?? [];
+
+		let proxyList;
+		try {
+			proxyList = readFileSync(`${name}.proxies`)
+				.toString()
+				.trim()
+				.split('\n')
+				.map((x) => x.trim());
+		} catch {}
+
 		return {
 			maxPageSleep: envOrNumberMax(
 				minPageSleep,
@@ -362,7 +377,8 @@ const store = {
 				maxPageSleep,
 				browser.minSleep
 			),
-			name: envOrString(name)
+			name: envOrString(name),
+			proxyList
 		};
 	})
 };
