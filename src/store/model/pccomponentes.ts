@@ -498,6 +498,18 @@ export const PCComponentes: Store = {
 			series: 'sonyps5de',
 			url: 'https://www.pccomponentes.com/sony-playstation-5-edicion-digital'
 		},
+		{
+			brand: 'microsoft',
+			model: 'xbox series s',
+			series: 'xboxss',
+			url: 'https://www.pccomponentes.com/microsoft-xbox-series-s-512gb'
+		},
+		{
+			brand: 'microsoft',
+			model: 'xbox series s',
+			series: 'xboxsx',
+			url: 'https://www.pccomponentes.com/microsoft-xbox-series-x-1tb'
+		}
 	],
 	name: 'pccomponentes'
 };
