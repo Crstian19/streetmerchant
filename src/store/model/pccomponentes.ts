@@ -485,7 +485,19 @@ export const PCComponentes: Store = {
 			model: 'amd reference',
 			series: 'rx6800',
 			url: 'https://www.pccomponentes.com/xfx-amd-radeon-rx-6800-16gb-gddr6'
-		}
+		},
+		{
+			brand: 'sony',
+			model: 'ps5 console',
+			series: 'sonyps5c',
+			url: 'https://www.pccomponentes.com/sony-playstation-5'
+		},
+		{
+			brand: 'sony',
+			model: 'ps5 digital',
+			series: 'sonyps5de',
+			url: 'https://www.pccomponentes.com/sony-playstation-5-edicion-digital'
+		},
 	],
 	name: 'pccomponentes'
 };
